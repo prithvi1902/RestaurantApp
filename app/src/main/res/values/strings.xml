@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">RestaurantApp</string>
+    <string name="title_activity_maps">Restaurants near you</string>
+    <string name="find_restaurants_near_you">Find Restaurants near you!</string>
+    <string name="lets_go">Lets go!</string>
+    <string name="restaurant_name">Restaurant name</string>
+    <string name="address">Address</string>
+    <string name="distance">Distance</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="show_on_map">Switch</string>
+
+</resources>
