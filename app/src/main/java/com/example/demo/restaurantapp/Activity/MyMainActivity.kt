@@ -3,6 +3,7 @@ package com.example.demo.restaurantapp.Activity
 import android.Manifest
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.pm.PackageManager
@@ -46,7 +47,7 @@ class MyMainActivity : AppCompatActivity(), OnMapReadyCallback {
     var vFlag = 0
 
     private var mLocationPermissionGranted = false
-    var isLoading: Boolean = false
+    var isLoading: Boolean? = false
 
     var mLatLng: LatLng = LatLng(0.000000, 0.000000)
     lateinit var arrList: ArrayList<Result?>
@@ -167,7 +168,7 @@ class MyMainActivity : AppCompatActivity(), OnMapReadyCallback {
                 val location = LatLng(lat, lng)
                 mMap.addMarker(MarkerOptions().position(location).title(name)).showInfoWindow()
                 if (i == it.size / 2)
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(20F))
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15F))
             } catch (e: NullPointerException) {
                 e.printStackTrace()
             }
@@ -259,6 +260,10 @@ class MyMainActivity : AppCompatActivity(), OnMapReadyCallback {
             setDataToRecyclerView()
         })
 
+        model.isLoading.observe(this, Observer {
+            isLoading = it
+        })
+
         /*  model.nextPageToken.observe(this, Observer {
               isLoading = it.equals(null)
           })*/
@@ -285,22 +290,25 @@ class MyMainActivity : AppCompatActivity(), OnMapReadyCallback {
                 lastVisibleItem = linearLayoutManager.findLastCompletelyVisibleItemPosition()
                 totalItemCount = linearLayoutManager.itemCount
 
-                if (!isLoading && (totalItemCount <= lastVisibleItem + visibleThreshold)) {
-
-                    if (arrList.size <= totalItemCount) {
+                if (!isLoading!! && (totalItemCount <= lastVisibleItem + visibleThreshold)) {
+                Log.d(mTAG, "Array List's size: " + arrList.size)
+                    Log.d(mTAG, "Total item: " + totalItemCount)
+                    if (arrList.size <= 20) {
                         arrList.add(null)
+//                        adapter.notifyItemInserted(arrList.size - 1)
                         result_recyclerView.post(Runnable { adapter.notifyItemInserted(arrList.size - 1) })
 
                         Handler().postDelayed(Runnable {
                             arrList.removeAt(arrList.size - 1)
+                            //adapter.notifyItemRemoved(arrList.size)
                             result_recyclerView.post(Runnable { adapter.notifyItemRemoved(arrList.size) })
                         }, 50)
 
-                        isLoading = false
-                        Handler().postDelayed({
+                        //isLoading = false
+                        /*Handler().postDelayed({
                             Log.d(mTAG, "LatLng value inside Load more" + mLatLng)
                             model.getRestaurants(mLatLng)
-                        }, 100)
+                        }, 100)*/
                         //adapter.notifyDataSetChanged()
                     }
                     //isLoading = true
